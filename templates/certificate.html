@@ -1,0 +1,88 @@
+{% load staticfiles %}
+
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=letter, initial-scale=1.0">
+    <link href="http://127.0.0.1:8001/static/css/tailwind.css" rel="stylesheet">
+    <title>Certificate</title>
+
+
+    <style type='text/css'>
+      @media print {
+        @page {
+          size: Letter landscape;
+        }
+
+        .header {
+          display: none;
+        }
+      }
+
+      @font-face {
+        font-family: 'EB Garamond';
+        src: url("{% static 'fonts/EBGaramond-Regular.ttf' %}");
+      }
+      @font-face {
+        font-family: 'Ephesis';
+        src: url("{% static 'fonts/Ephesis-Regular.ttf' %}");
+      }
+
+      .eb-garamond {
+        font-family: 'EB Garamond', serif;
+      }
+
+      .ephesis {
+        font-family: 'Ephesis', cursive;
+      }
+
+      .serif {
+        font-family: serif;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="relative" style="width: 920px; height: 650px;">
+      <img src="{{ background_image }}" alt="Certificate Background" class="w-full h-auto" width="100" height="auto">
+      <div class="absolute inset-14" style="color: #4A314D;">
+        <div class="absolute inset-0 text-[#4A314D] serif">
+          <div class="text-center inline-block float-left">
+            <p class="text-sm">ISSUED ON: {{ issue_date }}</p>
+          </div>
+          <div class="text-center inline-block float-right">
+            <p class="text-sm">CERTIFICATE ID: {{ certificate_id }}</p>
+          </div>
+        </div>
+
+        <div class="absolute inset-0 text-center">
+          <img src="{{ company_logo }}" alt="Certificate Logo" class="mx-auto" width="100" height="auto">
+          <h1 class="text-3xl eb-garamond tracking-wide mt-4">{{ title }}</h1>
+          <p class="text-sm mt-3 serif">presented to</p>
+        </div>
+
+        <div class="absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+          <div class="ephesis text-7xl text-center mb-8">{{ recipient }}</div>
+        </div>
+
+        <div class="absolute text-center serif" style="top: 77%; left: 50%; transform: translate(-50%, -50%); width: 75%;">
+          <p class="text-sm">{{ description }}</p>
+          <p class="text-3xl mt-2 eb-garamond">{{ course_title }}</p>
+        </div>
+
+        <div class="absolute inset-0 text-[#4A314D]" style="margin-top: 60%">
+          <div class="text-center inline-block float-left">
+            <p class="text-3xl ephesis">{{ signature_1.name }}</p>
+            <p class="text-sm serif">{{ signature_1.title }}</p>
+          </div>
+          <div class="text-center inline-block float-right">
+            <p class="text-3xl ephesis">{{ signature_2.name }}</p>
+            <p class="text-sm serif">{{ signature_2.title }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
