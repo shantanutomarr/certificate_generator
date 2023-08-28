@@ -1,0 +1,7 @@
+<h3>Submit the certificate context</h3>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_ul }}
+  <button type="submit">Submit</button>
+</form>
