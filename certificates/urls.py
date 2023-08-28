@@ -1,7 +1,8 @@
 from django.conf.urls import url
-from certificates.views import generate_certificate_pdf, render_certificate
+from certificates.views import UploadCertificateTemplateView, GenerateCertificatePDFView, RenderCertificateView
 
 urlpatterns = [
-    url('render/', render_certificate, name='render'),
-    url('generate/', generate_certificate_pdf, name='generate'),
+    url(r'^upload_template/$', UploadCertificateTemplateView.as_view(), name='upload_template'),
+    url(r'(?P<template_id>\d+)/render/$', RenderCertificateView.as_view(), name='render'),
+    url(r'(?P<template_id>\d+)/generate/$', GenerateCertificatePDFView.as_view(), name='generate'),
 ]
