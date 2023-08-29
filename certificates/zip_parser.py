@@ -4,34 +4,30 @@ import chardet
 import cssutils
 import uuid
 import zipfile
-
-from django.contrib.staticfiles.templatetags.staticfiles import static
-from django.conf import settings
-
 from bs4 import BeautifulSoup
+from django.conf import settings
+from django.contrib.staticfiles.templatetags.staticfiles import static
 
 
 class TemplateZipParser(object):
+    """Parses template from a ZIP file and returns a single standalone HTML string."""
+
     def __init__(self, zip_path, destination_folder):
         self.zip_path = zip_path
         self.folder = destination_folder
-        self.soup = None
 
     def parse(self):
         self.unzip_to_folder()
-        self.soup = self.load_template()
-        self.process_template()
-        return str(self.soup)
+        soup = self.get_template_soup()
+        soup = self.convert_relative_file_paths_to_absolute(soup)
+        soup = self.upload_embedded_files(soup)
+        return str(soup)
     
     def unzip_to_folder(self):
         with zipfile.ZipFile(self.zip_path, 'r') as zip_ref:
             zip_ref.extractall(self.folder)
 
-    def process_template(self, soup):
-        self.soup = self.convert_relative_file_paths_to_absolute()
-        self.soup = self.upload_embedded_files()
-
-    def load_template(self):
+    def get_template_soup(self):
         html_file, self.folder = self.get_html_file_from_folder()
         html_file_content = self.read_and_encode_html(html_file)
         return BeautifulSoup(html_file_content, "html.parser")
@@ -51,20 +47,22 @@ class TemplateZipParser(object):
             return html_file_content.decode("Windows-1252").encode("utf-8")
         return six.text_type(html_file_content, errors="ignore")
 
-    def convert_relative_file_paths_to_absolute(self):
-        relative_path_processor = RelativeToAbsolutePathConverter(self.soup, self.folder)
-        return relative_path_processor.process()
+    def convert_relative_file_paths_to_absolute(self, soup):
+        relative_path_processor = RelativeToAbsolutePathConverter(soup, self.folder)
+        return relative_path_processor.run()
 
-    def upload_embedded_files(self):
-        return EmbeddedFileUploader(self.soup).process()
+    def upload_embedded_files(self, soup):
+        return EmbeddedFileUploader(soup).run()
 
 
 class RelativeToAbsolutePathConverter(object):
+    """Converts local relative paths to local absolute paths in HTML."""
+
     def __init__(self, soup, directory=""):
         self.soup = soup
         self.directory = directory
 
-    def process(self):
+    def run(self):
         self.clean()
         return self.soup
 
@@ -104,10 +102,12 @@ class RelativeToAbsolutePathConverter(object):
 
 
 class EmbeddedFileUploader(object):
+    """Uploads embedded local files to cloud storage and replaces source URLs in HTML."""
+
     def __init__(self, soup):
         self.soup = soup
 
-    def process(self):
+    def run(self):
         destination = "{}/certificates".format(settings.STATIC_ROOT)
         self.process_elements("img", "src", destination)
         self.process_elements("link", "href", destination)
@@ -140,7 +140,10 @@ class EmbeddedFileUploader(object):
             return FileUploader(source, destination).process()
         return source
 
+
 class FileUploader(object):
+    """Uploads files to a destination folder."""
+
     def __init__(self, source, destination):
         self.source = source
         self.destination = destination
