@@ -10,7 +10,7 @@ class CertificateTemplateForm(forms.ModelForm):
 
 class CertificateContextForm(forms.Form):
     recepient_name = forms.CharField(max_length=30, initial="Shantanu Tomar")
-    title = forms.CharField(max_length=50, help_text="Certificate of Completion", initial="Certificate of Completion")
+    title = forms.CharField(max_length=50, initial="Certificate of Completion")
     description = forms.CharField(
         max_length=170,
         initial=(
