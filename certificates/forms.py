@@ -17,6 +17,7 @@ class CertificateContextForm(forms.Form):
             "Recognizing your dedication, hard work, and commitment to mastering web development fundamentals. "
             "We commend you for your outstanding performance in completing the course"
         ),
+        widget=forms.widgets.Textarea,
     )
     course_title = forms.CharField(max_length=50, initial="Fundamentals Of Web Development")
 

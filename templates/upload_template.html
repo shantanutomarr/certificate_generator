@@ -1,5 +1,26 @@
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Upload Template</button>
-</form>
+<div>
+  <h3>Upload Zipped Template For Certificate</h3>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Upload Template</button>
+  </form>
+</div>
+
+{% if uploaded_templates %}
+  <div style="margin-top: 50px">
+    <h3>Generate PDF from uploaded templates</h3>
+
+    <ul>
+      {% for template in uploaded_templates %}
+        {% if template.parsed_html %}
+          <li>
+            <a href="{% url 'generate' template_id=template.id %}" target="_blank">{{ template.name }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+  </div>
+{% endif %}

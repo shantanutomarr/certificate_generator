@@ -24,11 +24,16 @@ class UploadCertificateTemplateView(FormView):
         template.parsed_html = TemplateZipParser(template.zip_file.path, "{}/certificates/templates/{}".format(settings.STATIC_ROOT, template.slug)).parse()
         template.save()
         messages.success(self.request, 'Template uploaded successfully.')
-        return redirect(reverse("render", kwargs={"template_id": template.id}))
+        return redirect(reverse("generate", kwargs={"template_id": template.id}))
 
     def form_invalid(self, form):
         messages.error(self.request, 'There were errors.')
         return self.render_to_response(self.get_context_data(form=form))
+    
+    def get_context_data(self, **kwargs):
+        context = super(UploadCertificateTemplateView, self).get_context_data(**kwargs)
+        context["uploaded_templates"] = CertificateTemplate.objects.all()
+        return context
 
 
 class RenderCertificateView(FormView):
