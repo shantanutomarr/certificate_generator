@@ -1,5 +1,3 @@
-from typing import Any
-from django import http
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.http import HttpResponse
